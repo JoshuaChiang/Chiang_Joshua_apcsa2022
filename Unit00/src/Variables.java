@@ -2,7 +2,7 @@
 //www.apluscompsci.com
 
 //Name - Joshua Chiang
-//Date - 1/14/2022
+//Date - 1/15/2022
 //Class - APCSA
 //Lab  - Variables
 
@@ -61,7 +61,7 @@ public class Variables
 		System.out.println("*                               *");
 		System.out.println("*booleanOne = "+booleanOne+"\t\t*");
 		System.out.println("*stringOne = "+stringOne+"\t*");
-		System.out.println("/////////////////////////////////");
+		System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ");
 
 
 
