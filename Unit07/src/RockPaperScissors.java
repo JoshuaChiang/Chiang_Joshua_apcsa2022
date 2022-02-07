@@ -12,10 +12,12 @@ public class RockPaperScissors
 
 	public RockPaperScissors()
 	{
+		setPlayers(null);
 	}
 
 	public RockPaperScissors(String player)
 	{
+		setPlayers(player);
 	}
 
 	public void setPlayers(String player)
