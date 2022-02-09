@@ -34,21 +34,28 @@ public class Triples
 			if(a % i == 0 && b % i == 0 && c % i == 0) {
 				max = i;
 			}
-			
 		}
-			
 		return max;
 	}
 
 	public String toString()
 	{
 		String output="";
+		for(int c = 1; c < number; c += 2) {
+			for(int b = 1; b < c; b++) {
+				for(int a = 1; a < b; a++) {
+					if((a % 2 == b % 2) || greatestCommonFactor(a, b, c) > 1) {
+						continue;
+					} else {
+						if(a*a + b*b == c*c) {
+							output += a + " " + b + " " + c + "\n";
+						}
+					}
+					
+				}
+			}
+		}
 
-
-
-
-
-
-		return output+"\n";
+		return output + "\n";
 	}
 }
