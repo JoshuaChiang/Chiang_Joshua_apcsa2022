@@ -27,5 +27,6 @@ public class DoubleRunner
 		BiggestDouble run6 = new BiggestDouble(4.5, 16.7, -7.8, -9.0);
 		System.out.println(run6 + "\n");
 		
+		
 	}
 }
