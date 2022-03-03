@@ -11,6 +11,10 @@ public class ToyStoreRunner
 {
 	public static void main( String args[] )
 	{
+		ToyStore b = new ToyStore();
+		b.loadToys("sorry bat sorry sorry train train teddy teddy ball ball");
+		out.println(b);
+		out.println("max == " + b.getMostFrequentToy());
 
 	}
 }
