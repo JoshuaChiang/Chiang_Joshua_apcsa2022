@@ -148,6 +148,60 @@ public class PictureTester
       swan.explore();
   }
   
+  public static void testChromakey()
+  {
+      Picture mark = new Picture( "blue-mark.jpg" );
+      Picture moon = new Picture( "moon-surface.jpg" );
+      mark.chromakey( moon );
+      mark.explore();
+  }
+  
+  public static void testEncodeAndDecode()
+  {
+      Picture beach = new Picture( "beach.jpg" );
+      beach.explore();
+      Picture message = new Picture( "msg.jpg" );
+      beach.encode( message );
+      beach.explore();
+      Picture decoded = beach.decode();
+      decoded.explore();
+  }
+  
+  public static void testGetCountRedOverValue( int value )
+  {
+      Picture beach = new Picture( "beach.jpg" );
+      int count = beach.getCountRedOverValue( value );
+      System.out.println( count );
+  }
+  
+  public static void testSetRedToHalfValueInTopHalf()
+  {
+      Picture beach = new Picture( "beach.jpg" );
+      beach.explore();
+      beach.setRedToHalfValueInTopHalf();
+      beach.explore();
+  }
+  
+  public static void testClearBlueOverValue( int value )
+  {
+      Picture beach = new Picture( "beach.jpg" );
+      beach.explore();
+      beach.clearBlueOverValue( value );
+      beach.explore();
+  }
+  
+  public static void testGetAverageForColumn( int col )
+  {
+      Picture beach = new Picture( "beach.jpg" );
+      beach.explore();
+      int[] avgArray = beach.getAverageForColumn( col );
+      for ( int i = 0; i < 5; i++ )
+      {
+          System.out.println( avgArray[i] );
+      }
+  }
+  
+  
   /** Main method for testing.  Every class can have a main
     * method in Java */
   public static void main(String[] args)
@@ -170,8 +224,8 @@ public class PictureTester
     //testCollage();
     //testCopy();
     //testEdgeDetection();
-    testEdgeDetection2();
-    //testChromakey();
+    //testEdgeDetection2();
+    testChromakey();
     //testEncodeAndDecode();
     //testGetCountRedOverValue(250);
     //testSetRedToHalfValueInTopHalf();

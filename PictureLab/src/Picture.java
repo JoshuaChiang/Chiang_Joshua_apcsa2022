@@ -444,4 +444,122 @@ public class Picture extends SimplePicture
 	  }
   }
   
+  public void chromakey(Picture from){
+	  Pixel[][] pixels = this.getPixels2D();
+	  Pixel[][] pixels2 = from.getPixels2D();
+	    for (int row = 0; row < pixels.length; row++)
+	    {
+	      for (int col = 0; col < pixels[0].length; col++)
+	      {
+	        if(pixels[row][col].getBlue() > pixels[row][col].getRed()) {
+	          pixels[row][col].setColor(pixels2[row][col].getColor());
+	        }
+	      }
+	    }
+  }
+  
+  public void encode(Picture msg){
+      Pixel[][] thisPixels = this.getPixels2D();
+      Pixel[][] fromPixels = msg.getPixels2D();
+
+      for(int r = 0; r < thisPixels.length; r++){
+          for(int c = 0; c < fromPixels[r].length; c++){
+              if(thisPixels[r][c].getRed()%2==1)
+                  thisPixels[r][c].setRed(thisPixels[r][c].getRed()-1);
+          }
+      }
+
+      for(int r = 0; r < thisPixels.length; r++){
+          for(int c = 0; c < thisPixels[r].length; c++){
+              if(fromPixels[r][c].colorDistance(Color.BLACK)<50){
+                  if(thisPixels[r][c].getRed()%2==0)
+                      thisPixels[r][c].setRed(thisPixels[r][c].getRed()+1);
+              }
+          }
+      }
+  }
+  
+  public Picture decode(){
+      Picture now = new Picture(this.getHeight(), this.getWidth());
+      Pixel[][] thisPixels = this.getPixels2D();
+      Pixel[][] nowPixels = now.getPixels2D();
+
+      for(int r = 0; r < thisPixels.length; r++){
+          for(int c = 0; c < thisPixels[r].length; c++){
+              if(thisPixels[r][c].getRed()%2==1)
+                  nowPixels[r][c].setColor(Color.BLACK);
+          }
+      }
+
+      return now;
+  }
+  
+  public int getCountRedOverValue( int value )
+  {
+      int count = 0;
+      Pixel[][] pixels = this.getPixels2D();
+      Pixel currPixel = null;
+      for ( int row = 0; row < pixels.length; row++ )
+      {
+          for ( int col = 0; col < pixels[0].length; col++ )
+          {
+              currPixel = pixels[row][col];
+              if ( currPixel.getRed() > value )
+              {
+                  count++;
+              }
+          }
+      }
+      return count;
+  }
+  
+  public void setRedToHalfValueInTopHalf()
+  {
+      Pixel[][] pixels = this.getPixels2D();
+      Pixel currPixel = null;
+      for ( int row = 0; row < pixels.length / 2; row++ )
+      {
+          for ( int col = 0; col < pixels[0].length; col++ )
+          {
+              currPixel = pixels[row][col];
+              currPixel.setRed( currPixel.getRed() / 2 );
+          }
+      }
+  }
+
+  public void clearBlueOverValue( int value )
+  {
+      Pixel[][] pixels = this.getPixels2D();
+      Pixel currPixel = null;
+      for ( int row = 0; row < pixels.length; row++ )
+      {
+          for ( int col = 0; col < pixels[0].length; col++ )
+          {
+              currPixel = pixels[row][col];
+              if ( currPixel.getBlue() > value )
+              {
+                  currPixel.setBlue( 0 );
+              }
+          }
+      }
+  }
+
+  public int[] getAverageForColumn( int col )
+  {
+      Pixel[][] pixels = this.getPixels2D();
+      Pixel currPixel = null;
+      int[] averageArray = new int[pixels[col].length];
+      int total = 0;
+
+      for ( int row = 0; row < pixels.length; row++ )
+      {
+          currPixel = pixels[row][col];
+          total = currPixel.getRed() + currPixel.getGreen()
+              + currPixel.getBlue();
+          averageArray[row] = total / 3;
+      }
+      return averageArray;
+  }
+  
+  
 } // this } is the end of class Picture, put all new methods before this
