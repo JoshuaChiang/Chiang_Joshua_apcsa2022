@@ -158,9 +158,9 @@ public class PictureTester
   
   public static void testEncodeAndDecode()
   {
-      Picture beach = new Picture( "beach.jpg" );
+      Picture beach = new Picture( "C:\\Users\\joshy\\Downloads\\school\\AP CSA\\Github\\Chiang_Joshua_apcsa2022\\PictureLab\\src\\images\\beach.jpg" );
       beach.explore();
-      Picture message = new Picture( "msg.jpg" );
+      Picture message = new Picture( "C:\\Users\\joshy\\Downloads\\school\\AP CSA\\Github\\Chiang_Joshua_apcsa2022\\PictureLab\\src\\images\\msg.jpg" );
       beach.encode( message );
       beach.explore();
       Picture decoded = beach.decode();
@@ -201,6 +201,18 @@ public class PictureTester
       }
   }
   
+  public static void testSteganographyEncodeAndDecode()
+  {
+      Picture beach = new Picture( "C:\\Users\\joshy\\Downloads\\school\\AP CSA\\Github\\Chiang_Joshua_apcsa2022\\PictureLab\\src\\images\\beach.jpg" );
+      beach.explore();
+      Picture message = new Picture( "C:\\Users\\joshy\\Downloads\\school\\AP CSA\\Github\\Chiang_Joshua_apcsa2022\\PictureLab\\src\\images\\apple_icon.jpg" );
+      beach.newEncode( message );
+      beach.explore();
+      Picture decoded = beach.newDecode();
+      decoded.explore();
+  }
+
+  
   
   /** Main method for testing.  Every class can have a main
     * method in Java */
@@ -225,11 +237,13 @@ public class PictureTester
     //testCopy();
     //testEdgeDetection();
     //testEdgeDetection2();
-    testChromakey();
+    //testChromakey();
     //testEncodeAndDecode();
     //testGetCountRedOverValue(250);
     //testSetRedToHalfValueInTopHalf();
     //testClearBlueOverValue(200);
     //testGetAverageForColumn(0);
+	  
+	testSteganographyEncodeAndDecode();
   }
 }

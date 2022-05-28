@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.Arrays;
 import java.awt.font.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
@@ -561,5 +562,347 @@ public class Picture extends SimplePicture
       return averageArray;
   }
   
+  
+//Steganography project
+  
+  public int[] recArray;
+  
+  public int[] recaman(int x) 	//Recaman's Sequence: a(n) = a(n-1) + n
+  {
+      //Create array
+      recArray = new int[x];
+   
+      //First term = 0
+      recArray[0] = 0;
+   
+      for (int i = 1; i < x; i++) {
+          int curr = recArray[i - 1] - i;
+          for (int j = 0; j < i; j++) {
+              //Checks if recArray[i-1] - i < 0 or is already in recArray[]
+              if ((recArray[j] == curr) || curr < 0) {
+                  curr = recArray[i - 1] + i;
+                  break;
+              }
+          }
+          recArray[i] = curr;
+      }
+      return recArray;
+  }
+  
+  public void newEncode(Picture messagePict)
+  {
+	  Pixel[][] messagePixels = messagePict.getPixels2D();
+	  Pixel[][] currPixels = this.getPixels2D();
+	  Pixel currPixel = null;
+	  Pixel messagePixel = null;
+	  
+	  //seq is used to increment the index for accessing recArray[]
+	  int seq = 0;
+	  
+	  //The hundreds digit, tens digit and ones digit of the recaman number at recArray[seq]
+	  int iR; 	//hundreds
+	  int iG; 	//tens
+	  int iB; 	//ones
+	  
+	  //The red, green and blue value of currpixel
+	  int iRed;
+	  int iGreen;
+	  int iBlue;
+	  
+	  //The hundreds digit, tens digit and ones digit of the red value of currpixel
+	  int iRed100s;
+	  int iRed10s;
+	  int iRed1s;
+	  
+	  //The hundreds digit, tens digit and ones digit of the green value of currpixel
+	  int iGreen100s;
+	  int iGreen10s;
+	  int iGreen1s;
+	  
+	  //The hundreds digit, tens digit and ones digit of the blue value of currpixel
+	  int iBlue100s;
+	  int iBlue10s;
+	  int iBlue1s;
+	  
+	  //Calls recaman method
+	  //Creates an array with consecutive Recaman terms
+	  //The number of terms is equal to the total amount of pixels in the original picture (1 term corresponds to 1 pixel)
+	  recaman(this.getWidth()*this.getHeight());
+	  
+	  for (int row = 0; row < this.getHeight(); row++)
+	  {
+		  for (int col = 0; col < this.getWidth(); col++)
+		  {
+			  currPixel = currPixels[row][col];
+			  
+			  //bound the recaman number to 3 digits for the 3 RGB values
+			  while(recArray[seq]>999) {
+				  recArray[seq] = recArray[seq]%10;
+			  }
+			  
+			  iR = recArray[seq]/100;
+			  iG = (recArray[seq]/10)%10;
+			  iB = recArray[seq]%10;
+			  
+			  iRed = currPixel.getRed();
+			  iGreen = currPixel.getGreen();
+			  iBlue = currPixel.getBlue();
+			  
+			  iRed100s = iRed/100;
+			  iRed10s = (iRed/10)%10;
+			  iRed1s = iRed%10;
+			  
+			  iGreen100s = iGreen/100;
+			  iGreen10s = (iGreen/10)%10;
+			  iGreen1s = iGreen%10;
+			  
+			  iBlue100s = iBlue/100;
+			  iBlue10s = (iBlue/10)%10;
+			  iBlue1s = iBlue%10;
+			  
+			  
+			  // Change red value by 1 to remove all instances of accidental sequence matches
+			  if (iR == iRed1s && iG == iGreen1s && iB == iBlue1s) {
+				  if(iRed1s == 9) {
+					  iRed1s = 8;
+				  } else {
+					  iRed1s=iRed1s+1;
+				  }
+			  }
+			  
+			  //encoding the message
+			  if (messagePixels[row][col].colorDistance(Color.BLACK) < 50)
+			  { 
+				  iRed1s = iR;
+				  iGreen1s = iG;
+				  iBlue1s = iB;
+			  
+				  currPixel.setRed(iRed100s*100+iRed10s*10+iRed1s);
+				  currPixel.setGreen(iGreen100s*100+iGreen10s*10+iGreen1s);
+				  currPixel.setBlue(iBlue100s*100+iBlue10s*10+iBlue1s);
+			  }
+			  seq++;
+		 }
+	 }
+ }
+  
+  public Picture newDecode()
+  {
+	  Pixel[][] pixels = this.getPixels2D();
+	  int height = this.getHeight();
+	  int width = this.getWidth();
+	  Pixel currPixel = null;
+	  //seq is used to increment the index for accessing recArray[]
+	  int seq = 0;
+	  
+	  //The hundreds digit, tens digit and ones digit of the recaman number at recArray[seq]
+	  int iR; 	//hundreds
+	  int iG; 	//tens
+	  int iB; 	//ones
+	  
+	  //The red, green and blue value of currpixel
+	  int iRed;
+	  int iGreen;
+	  int iBlue;
+	  
+	  //The hundreds digit, tens digit and ones digit of the red value of currpixel
+	  int iRed100s;
+	  int iRed10s;
+	  int iRed1s;
+	  
+	  //The hundreds digit, tens digit and ones digit of the green value of currpixel
+	  int iGreen100s;
+	  int iGreen10s;
+	  int iGreen1s;
+	  
+	  //The hundreds digit, tens digit and ones digit of the ble value of currpixel
+	  int iBlue100s;
+	  int iBlue10s;
+	  int iBlue1s;
+
+	  Pixel messagePixel = null;
+	  Picture messagePicture = new Picture(height,width);
+	  Pixel[][] messagePixels = messagePicture.getPixels2D();
+	  int count = 0;
+	  
+	  //Decoding
+	  for (int row = 0; row < this.getHeight(); row++)
+	  {
+		  for (int col = 0; col < this.getWidth(); col++)
+		  {
+			  currPixel = pixels[row][col];
+			  //bound the recaman number to 3 digits for the 3 RGB values
+			  while(recArray[seq]>50) {
+				  recArray[seq] = recArray[seq]%10;
+			  }
+			  
+			  iR = recArray[seq]/100;
+			  iG = (recArray[seq]/10)%10;
+			  iB = recArray[seq]%10;
+			  
+			  iRed = currPixel.getRed();
+			  iGreen = currPixel.getGreen();
+			  iBlue = currPixel.getBlue();
+			  
+			  iRed100s = iRed/100;
+			  iRed10s = (iRed/10)%10;
+			  iRed1s = iRed%10;
+			  
+			  iGreen100s = iGreen/100;
+			  iGreen10s = (iGreen/10)%10;
+			  iGreen1s = iGreen%10;
+			  
+			  iBlue100s = iBlue/100;
+			  iBlue10s = (iBlue/10)%10;
+			  iBlue1s = iBlue%10;
+			  
+			  
+			  messagePixel = messagePixels[row][col];
+			  
+			  //check if the ones digit of the RGB values combine to form the recaman number
+			  if (iR == iRed1s && iG == iGreen1s && iB == iBlue1s)
+			  {
+				  messagePixel.setColor(Color.BLACK);
+			  }
+			  seq++;
+		  }
+	  }
+	  return messagePicture;
+  }
+  
+  //failed initial attempt
+  /**
+  public void stegEncode(Picture messagePict)
+  {
+	  Pixel[][] messagePixels = messagePict.getPixels2D();
+	  Pixel[][] currPixels = this.getPixels2D();
+	  Pixel currPixel = null;
+	  Pixel prevPixel = null;
+	  Pixel nextPixel = null;
+	  Pixel messagePixel = null;
+	  int count = 0;
+	  int temp = 0;
+	  int avgDiff=0;
+	  int prevAvgDiff=0;
+	  int nextAvgDiff=0;
+	  recaman(50);
+	  
+	  for (int row = 0; row < currPixels.length; row++) {
+		  for (int col = 1; col < currPixels[0].length-1; col++) {
+			  
+			  currPixel = currPixels[row][col];
+			  prevPixel = currPixels[row][col-1];
+			  nextPixel = currPixels[row][col+1];
+			  int currAvg = (currPixel.getRed()+currPixel.getBlue()+currPixel.getGreen())/3;
+			  int prevAvg = (prevPixel.getRed()+prevPixel.getBlue()+prevPixel.getGreen())/3;
+			  int nextAvg = (nextPixel.getRed()+nextPixel.getBlue()+nextPixel.getGreen())/3;
+			  for(int i = 1; i<recArray.length-1; i++) {
+				  //Get rid of all recamans
+				  if (currAvg == recArray[i] && prevAvg == recArray[i-1] && nextAvg == recArray[i+1]){
+					  if(currPixel.getBlue()<=2) {
+						  currPixel.setBlue(currPixel.getBlue()+1);
+					  } else {
+						  currPixel.setBlue(currPixel.getBlue()-1);
+					  }
+					  if(currPixel.getRed()<=2) {
+						  currPixel.setRed(currPixel.getRed()+1);
+					  } else {
+						  currPixel.setRed(currPixel.getRed()-1);
+					  }
+					  if(currPixel.getGreen()<=2) {
+						  currPixel.setGreen(currPixel.getGreen()+1);
+					  } else {
+						  currPixel.setGreen(currPixel.getGreen()-1);
+					  }
+				  }
+			  }
+			  messagePixel = messagePixels[row][col];
+			  if (messagePixel.colorDistance(Color.BLACK) < 50){
+				  int[] newArr = recArray;
+				  newArr[newArr.length-1] = currAvg;
+				  //sort recArray
+				  Arrays.sort(newArr);
+				  //find least difference recaman with original average
+				  for(int a = 1; a<newArr.length-1; a++) {
+					  if(newArr[a] == currAvg) {
+						  if(currAvg - newArr[a-1] < newArr[a+1] - currAvg) {
+							  avgDiff = currAvg - newArr[a-1];
+							  currPixel.setRed(currPixel.getRed()-avgDiff);
+							  currPixel.setGreen(currPixel.getGreen()-avgDiff);
+							  currPixel.setBlue(currPixel.getBlue()-avgDiff);
+							  currAvg = newArr[a-1];
+						  } else if(currAvg - newArr[a-1] > newArr[a+1] - currAvg){
+							  avgDiff = newArr[a+1] - currAvg;
+							  currPixel.setRed(currPixel.getRed()+avgDiff);
+							  currPixel.setGreen(currPixel.getGreen()+avgDiff);
+							  currPixel.setBlue(currPixel.getBlue()+avgDiff);
+							  currAvg = newArr[a+1];
+						  } else {
+							  currAvg = newArr[a];
+						  }
+					  }
+					  
+				  }
+				  //set the prev and next RGBs
+				  if(prevAvg < nextAvg) {
+					  for(int b = 1; b<recArray.length-1; b++) {
+						  if(recArray[b] == currAvg) {
+							  prevAvgDiff = recArray[b-1] - prevAvg;
+							  prevPixel.setRed(prevPixel.getRed()-prevAvgDiff);
+							  prevPixel.setGreen(prevPixel.getGreen()-prevAvgDiff);
+							  prevPixel.setBlue(prevPixel.getBlue()-prevAvgDiff);
+							  prevAvg = recArray[b];
+						  }
+					  }
+					  for(int d = 1; d<recArray.length-1; d++) {
+						  if(recArray[d] == currAvg) {
+							  nextAvgDiff = nextAvg - recArray[d+1];
+							  nextPixel.setRed(nextPixel.getRed()+nextAvgDiff);
+							  nextPixel.setGreen(nextPixel.getGreen()+nextAvgDiff);
+							  nextPixel.setBlue(nextPixel.getBlue()+nextAvgDiff);
+							  nextAvg = recArray[d];
+						  }
+					  }
+				  } 
+			  }	
+		  }
+	  }
+  	System.out.println(count);
+  }
+  
+  public Picture stegDecode()
+  {
+	  Pixel[][] pixels = this.getPixels2D();
+	  int height = this.getHeight();
+	  int width = this.getWidth();
+	  Pixel currPixel = null;
+	  Pixel prevPixel = null;
+	  Pixel nextPixel = null;
+	  Pixel messagePixel = null;
+	  
+	  Picture messagePicture = new Picture(height,width);
+	  Pixel[][] messagePixels = messagePicture.getPixels2D();
+	  int count = 0;
+	  for (int row = 0; row < this.getHeight(); row++){
+		  for (int col = 1; col < this.getWidth()-1; col++){
+			  currPixel = pixels[row][col];
+			  messagePixel = messagePixels[row][col];
+			  prevPixel = pixels[row][col-1];
+			  nextPixel = pixels[row][col+1];
+			  int currAvg = (currPixel.getRed()+currPixel.getBlue()+currPixel.getGreen())/3;
+			  int prevAvg = (prevPixel.getRed()+prevPixel.getBlue()+prevPixel.getGreen())/3;
+			  int nextAvg = (nextPixel.getRed()+nextPixel.getBlue()+nextPixel.getGreen())/3;
+			  for(int i=1; i<recArray.length-1; i=i+3){
+				  if((recArray[i] == currAvg && recArray[i-1] == prevAvg && recArray[i+1] == nextAvg) || ( recArray[i] == currAvg && recArray[i-1] == nextAvg && recArray[i+1] == prevAvg)){
+					  messagePixel.setColor(Color.BLACK);
+					  count++;
+				  }
+			  }
+		  } 
+	  }
+	  System.out.println(count);
+	  return messagePicture;
+  }
+  **/
   
 } // this } is the end of class Picture, put all new methods before this
